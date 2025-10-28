@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Magical Moments Diary + Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#ffeef6;
+  --bg2:#ffdfe8;
+  --accent:#ff1493;
+  --card:#ffffffcc;
+  --chat-bg:#0b2f13;
+  --bubble-lakshmi:#ffb6c1;
+  --bubble-kunal:#d0b0ff;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:'Poppins',system-ui,Arial,sans-serif;
+  background: linear-gradient(180deg,var(--bg1),var(--bg2));
+  overflow:hidden;
+  color:#222;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:28px 16px;
+}
+
+/* --- Diary section --- */
+#diaryTitle{
+  font-size:34px;
+  font-weight:600;
+  color:var(--accent);
+  margin:8px 0 18px 0;
+  letter-spacing:0.6px;
+}
+#diaryContainer{
+  width:100%;
+  max-width:860px;
+  height:72vh;
+  background:var(--card);
+  border-radius:18px;
+  box-shadow:0 18px 40px rgba(0,0,0,0.12);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:22px;
+  position:relative;
+  overflow:hidden;
+  transition:opacity 1s ease;
+}
+.page-wrap{
+  width:100%;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+}
+.photo {
+  width:90%;
+  max-width:640px;
+  aspect-ratio: 16 / 9; /* keeps consistent shape */
+  border-radius:14px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(180deg,#fff,#ffeef6);
+  box-shadow:0 8px 24px rgba(0,0,0,0.08);
+  position: relative; /* needed so ::after positions correctly */
+  cursor: pointer;
+}
+.next-arrow {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 42px;
+  color: rgba(255, 20, 147, 0.7);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 1;
+}
+
+.next-arrow:hover {
+  color: var(--accent);
+  transform: translateY(-50%) scale(1.1);
+}
+.photo:hover::after {
+  color: var(--accent);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.photo img {
+  max-width:100%;
+  max-height:100%;
+  width:auto;
+  height:auto;
+  object-fit:contain; /* ensures full image fits without cropping */
+  display:block;
+  margin:auto;
+  opacity:0;
+  transform:scale(1.02);
+  transition:opacity .7s ease, transform .9s cubic-bezier(.2,.9,.3,1);
+}
+
+.photo.show img {
+  opacity:1;
+  transform:scale(1);
+}
+
+.caption{
+  width:86%;
+  max-width:720px;
+  font-size:18px;
+  color:var(--accent);
+  text-align:center;
+  line-height:1.35;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity .7s ease, transform .6s ease;
+}
+.caption.show{ opacity:1; transform:none; }
+.controls{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  align-items:center;
+  margin-top:8px;
+}
+#nextBtn{
+  display: none;
+  border:none;
+  background:linear-gradient(90deg,#ff6fb0,#ff2b8a);
+  color:#fff;
+  padding:12px 20px;
+  font-size:17px;
+  border-radius:12px;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(255,43,138,0.18);
+}
+#pageCounter{
+  font-size:15px;
+  color:#777;
+  padding:8px 10px;
+  border-radius:10px;
+  background:rgba(0,0,0,0.03);
+}
+.heart-float{
+  position:absolute;
+  pointer-events:none;
+  font-size:22px;
+  opacity:0;
+  transform:translateY(0);
+  animation:floatUp 5s linear infinite;
+}
+@keyframes floatUp{
+  0%{ transform:translateY(110vh) scale(.8); opacity:0; }
+  10%{ opacity:1; }
+  100%{ transform:translateY(-40vh) scale(1.2); opacity:0; }
+}
+#fadeScreen{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(180deg,#fff0f7,#ffe3ef);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+  opacity:0;
+  transition:opacity 2s ease;
+}
+#fadeScreen.show{
+  display:flex;
+  opacity:1;
+}
+#pandaBtn{
+  font-size:90px;
+  cursor:pointer;
+  animation:pulse 1.6s infinite ease-in-out;
+}
+@keyframes pulse{
+  0%,100%{ transform:scale(1);}
+  50%{ transform:scale(1.15);}
+}
+
+/* --- Chat section --- */
+#chatSection{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#000;
+  color:#fff;
+  justify-content:center;
+  align-items:center;
+}
+.phone{
+  width:92%;
+  max-width:420px;
+  height:88vh;
+  background:linear-gradient(180deg,rgba(0,0,0,0.75),rgba(0,0,0,0.65));
+  border-radius:28px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.7);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  border:2px solid rgba(255,255,255,0.03);
+}
+.topbar{height:64px;display:flex;align-items:center;padding:12px 14px;gap:12px;background:linear-gradient(90deg,rgba(0,0,0,0.25),rgba(0,0,0,0.05));}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(180deg,#ffb6c1,#ff78a8);display:flex;align-items:center;justify-content:center;font-weight:700}
+.name{font-weight:700}
+.sub{font-size:12px;color:rgba(255,255,255,0.6)}
+.messages{flex:1;padding:18px;overflow:hidden;display:flex;flex-direction:column;gap:12px;}
+.msg{max-width:78%;padding:10px 12px;border-radius:16px;line-height:1.4;position:relative;opacity:0;transform:translateY(18px) scale(0.98);transition:all 400ms ease;}
+.msg.show{opacity:1;transform:none;}
+.lakshmi{align-self:flex-start;background:var(--bubble-lakshmi);color:#000;border-top-left-radius:4px;}
+.kunal{align-self:flex-end;background:var(--bubble-kunal);color:#000;border-top-right-radius:4px;}
+.reaction{position:absolute;bottom:-10px;right:calc(50% - 10px);transform:translateY(6px);opacity:0;transition:all 300ms;}
+.reaction.show{opacity:1;transform:none;}
+.heart{padding:6px 8px;border-radius:999px;background:linear-gradient(180deg,#ff5f7a,#ffb6c1);color:white;font-weight:700;font-size:14px;}
+.blackout{position:absolute;inset:0;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;opacity:0;pointer-events:none;transition:opacity 700ms ease-in-out;}
+.blackout.show{opacity:1;pointer-events:auto;}
+.date{color:#fff;font-size:20px;font-weight:700;opacity:0;transform:translateY(8px);}
+.date.show{opacity:1;transform:none;}
+.line{color:#ffc0cb;font-size:18px;opacity:0;transform:translateY(8px);}
+.line.show{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div id="diaryTitle">Magical Moments with My Love</div>
+<div id="diaryContainer">
+  <div class="page-wrap">
+    <div class="photo" id="photoBox">
+      <div class="next-arrow" id="nextArrow">›</div>
+      <img id="photoImg" src="" alt="moment photo">
+    </div>
+    <div class="caption" id="captionBox"></div>
+  </div>
+  <div class="controls">
+    <div id="pageCounter">1 / 14</div>
+  </div>
+</div>
+
+<!-- Fade screen with Panda -->
+<div id="fadeScreen"><div id="pandaBtn">🐼</div></div>
+
+<!-- Chat Section -->
+<div id="chatSection">
+  <div class="phone">
+    <div class="topbar">
+      <div class="avatar">L</div>
+      <div><div class="name">Lakshmi🧿</div><div class="sub">online</div></div>
+    </div>
+    <div class="messages" id="messages"></div>
+    <div class="blackout" id="blackout"><div class="date" id="finalDate">7th Aug 2024</div><div class="line" id="finalLine">and the love story begins.....🩷😘🥰🌍🧿</div></div>
+  </div>
+</div>
+
+<script>
+/* --- Diary Logic --- */
+const pages=[
+{img:'1000261902.jpg',text:'Cute couple pglu dekho sath mai kitne pyare lgte hain 💖'},
+{img:'IMG-20250824-WA0000.jpg',text:'Yaad hai photo gussa mai lii thii phir bhi aacha aaya  🌸'},
+{img:'IMG-20251014-WA0003.jpg',text:'Holding hands bass hath mat chorna sath mat chorna'},
+{img:'IMG-20251014-WA0004.jpg',text:'The best moment'},
+{img:'IMG-20251014-WA0005.jpg',text:'Meri ice cream 🍦'},
+{img:'IMG-20251014-WA0006.jpg',text:'Sirf iss ek pic ke liye kitna sidhi chadnna pda tha tumko lehngaa mai ❤️🎬'},
+{img:'IMG-20251014-WA0007.jpg',text:'Mera face hi chup gya itna coding krte krte ✨'},
+{img:'IMG-20251018-WA0004.jpg',text:'Our random pic 🌼'},
+{img:'Snapchat-489604628.jpg',text:'Lovey dobey cute hug'},
+{img:'Snapchat-506405530.jpg',text:'Time endless sath couple watch'},
+{img:'Snapchat-509380850.jpg',text:'Mera bachcha🚶‍♂️🚶‍♀️'},
+{img:'Snapchat-558100152.jpg',text:'Betu mera wifey🧿🏖️'},
+{img:'IMG-20250928-WA0018.jpg',text:'Cute couple 🎆'},
+{img:'',text:'Always in my heart ❤️'}
+];
+const photoImg=document.getElementById('photoImg');
+const captionBox=document.getElementById('captionBox');
+const nextBtn=document.getElementById('nextBtn');
+const pageCounter=document.getElementById('pageCounter');
+const fadeScreen=document.getElementById('fadeScreen');
+const pandaBtn=document.getElementById('pandaBtn');
+let idx=0,total=pages.length;
+
+function showPage(i){
+  if(i>=total){endSequence();return;}
+  idx=i;
+  pageCounter.textContent=`${idx+1} / ${total}`;
+  const img=new Image();
+  img.src=pages[idx].img;
+  img.onload=()=>{
+    photoImg.src=img.src;
+    captionBox.textContent=pages[idx].text;
+    photoImg.style.opacity=1;
+    captionBox.classList.add('show');
+  };
+}
+// Tap on the photo to show next page
+document.getElementById('nextArrow').onclick = (e) => {
+  e.stopPropagation(); // prevents click bubbling
+  showPage(idx + 1);
+};
+
+function endSequence(){
+  document.getElementById('diaryContainer').style.opacity='0';
+  setTimeout(()=>{
+    document.getElementById('diaryContainer').style.display='none';
+    fadeScreen.classList.add('show');
+  },800);
+}
+pandaBtn.onclick=()=>{
+  fadeScreen.classList.remove('show');
+  document.getElementById('diaryTitle').style.display='none';
+  document.body.style.background='#000';
+  document.getElementById('chatSection').style.display='flex';
+  startChat();
+}
+showPage(0);
+
+/* --- Chat Logic --- */
+const convo=[
+{type:'lakshmi',content:'<div class="media">A video has been received</div>',reaction:true},    
+{type:'lakshmi',content:'<div class="media">A photo has been received<div class="playbtn">▶</div></div>',reaction:true},    
+{type:'lakshmi',content:'Thank you'},
+{type:'kunal',content:'Tum toh sach mai bahut sundar dikhti ho'},
+{type:'lakshmi',content:'Hiyy'},
+{type:'kunal',content:'Hnh sach mai tum meri student nhi hoti toh gf bna lete tumko'},
+{type:'lakshmi',content:'Sir aap kya bol rhee hain'},
+{type:'kunal',content:'Aab sundar lagogi toh kya bole'},
+{type:'lakshmi',content:'Hm'},
+{type:'kunal',content:'Banogi meri gf'},
+{type:'lakshmi',content:'Sir'},
+{type:'kunal',content:'Plz bn jaoo na'},
+{type:'lakshmi',content:'Okay thik hai'},
+{type:'kunal',content:'Sach mai'},
+{type:'lakshmi',content:'Hm'},
+{type:'kunal',content:'I love you 😘',reaction:true},
+{type:'lakshmi',content:'I love you too 💞',reaction:true}
+];
+function startChat(){
+  const messagesEl=document.getElementById('messages');
+  messagesEl.innerHTML='';
+  let i=0;
+  function showNext(){
+    if(i>=convo.length){
+      setTimeout(()=>{
+        document.getElementById('blackout').classList.add('show');
+        document.getElementById('finalDate').classList.add('show');
+        setTimeout(()=>document.getElementById('finalLine').classList.add('show'),400);
+      },1200);
+      return;
+    }
+    const item=convo[i++];
+    const el=document.createElement('div');
+    el.className=`msg ${item.type}`;
+    el.innerHTML=item.content;
+    if(item.reaction){
+      const r=document.createElement('div');
+      r.className='reaction';
+      r.innerHTML='<span class="heart">❤</span>';
+      el.appendChild(r);
+    }
+    messagesEl.appendChild(el);
+    requestAnimationFrame(()=>el.classList.add('show'));
+    messagesEl.scrollTop=messagesEl.scrollHeight;
+    if(item.reaction) setTimeout(()=>el.querySelector('.reaction').classList.add('show'),600);
+    setTimeout(showNext,2200);
+  }
+  showNext();
+}
+</script>
+</body>
+</html>

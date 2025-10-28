@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Login & Surprise</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg,#ffe0f0,#ffc0cb);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* --- LOGIN PAGE --- */
+#loginPage {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 1s;
+}
+
+#loginPage h1 {
+  font-family: 'Great Vibes', cursive;
+  font-size: 50px;
+  color: #ff1493;
+  margin-bottom: 10px;
+}
+
+#loginPage input {
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid #ffb6c1;
+  margin-bottom: 20px;
+  width: 70%;
+  font-size: 16px;
+  text-align: center;
+}
+
+#loginPage button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg,#ff69b4,#ff1493);
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#loginPage button:hover {
+  transform: scale(1.05);
+}
+
+#loginMsg {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+  transition: all 0.5s;
+  opacity: 0;
+}
+
+/* --- SURPRISE PAGE --- */
+#surprisePage {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg,#ffe0f0,#ffc0cb);
+  animation: fadeIn 1s;
+}
+
+.gift-box {
+  font-size: 80px;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.gift-box:hover {
+  transform: scale(1.1);
+}
+
+.dialog, #birthdayPage {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  transition: opacity 0.7s;
+}
+
+.dialog h1 {
+  font-family: 'Great Vibes', cursive;
+  color: #ff1493;
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+.dialog input {
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid #ffb6c1;
+  margin-bottom: 20px;
+  width: 80%;
+  font-size: 16px;
+  text-align: center;
+}
+
+.dialog button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg,#ff69b4,#ff1493);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.dialog button:hover {
+  transform: scale(1.05);
+}
+
+#birthdayPage h1 {
+  font-family: 'Great Vibes', cursive;
+  font-size: 60px;
+  color: #ff1493;
+}
+
+#countdown, #daysSince {
+  font-size: 20px;
+  margin-top: 10px;
+}
+
+#romanticMsg {
+  max-width: 80%;
+  font-size: 22px;
+  text-align: center;
+  margin: 20px 0;
+}
+
+#nextBtn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg,#ff69b4,#ff1493);
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#nextBtn:hover {
+  transform: scale(1.05);
+}
+
+/* Marquee */
+.marquee {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff1493;
+  animation: marquee 15s linear infinite;
+  padding: 10px 0;
+  position: absolute;
+  bottom: 0;
+}
+
+@keyframes marquee {
+  0% {transform: translateX(100%);}
+  100% {transform: translateX(-100%);}
+}
+
+/* Floating hearts */
+.heart-float {
+  position: absolute;
+  font-size: 24px;
+  animation: floatUp 5s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes floatUp {
+  0% {transform: translateY(100vh) scale(0.8); opacity: 0;}
+  10% {opacity: 1;}
+  100% {transform: translateY(-50vh) scale(1.2); opacity: 0;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+  <h1>Welcome Sweetheart ❤️</h1>
+  <p>Enter Password to Unlock Surprise</p>
+  <input type="password" id="passwordInput" placeholder="Enter Password...">
+  <button id="loginBtn">Login</button>
+  <div id="loginMsg"></div>
+</div>
+
+<!-- SURPRISE PAGE -->
+<div id="surprisePage">
+  <div class="centered" id="stage1">
+    <div class="gift-box" id="giftBox">🎁</div>
+    <p>Tap on the gift box</p>
+  </div>
+
+  <div class="dialog" id="nameDialog">
+    <h1>Enter the name</h1>
+    <input type="text" id="nameInput" placeholder="Your name..."/>
+    <button id="goBtn">Go</button>
+  </div>
+
+  <div id="birthdayPage">
+    <h1>Happy Birthday Sweetheart 🎂</h1>
+    <div id="countdown"></div>
+    <div id="romanticMsg">You are my better half, the reason my heart smiles every day. I am infinitely blessed to have you in my life. 💖</div>
+    <div id="daysSince"></div>
+    <button id="nextBtn">Go to Next Surprise</button>
+  </div>
+
+  <div class="marquee" id="loveMarquee">I love you 😘🥰🌍🧿❤️ &nbsp; I love you 😘🥰🌍🧿❤️ &nbsp;</div>
+</div>
+
+<script>
+// Elements
+const loginBtn = document.getElementById('loginBtn');
+const passwordInput = document.getElementById('passwordInput');
+const loginMsg = document.getElementById('loginMsg');
+const loginPage = document.getElementById('loginPage');
+const surprisePage = document.getElementById('surprisePage');
+
+// Login logic
+loginBtn.addEventListener('click', () => {
+  const pwd = passwordInput.value.trim();
+
+  if (pwd === '0405') {
+    loginMsg.textContent = 'I love you bachcha 😘🐼';
+    loginMsg.style.color = '#ff1493';
+    loginMsg.style.opacity = 1;
+
+    setTimeout(() => {
+      loginPage.style.display = 'none';
+      surprisePage.style.display = 'flex';
+    }, 1500);
+  } else {
+    loginMsg.textContent = "You don't love me 💔";
+    loginMsg.style.color = '#8b0000';
+    loginMsg.style.opacity = 1;
+    setTimeout(() => { loginMsg.style.opacity = 0; }, 2000);
+  }
+});
+
+// Floating hearts
+function createHeart() {
+  const heart = document.createElement('div');
+  heart.className = 'heart-float';
+  heart.style.left = Math.random() * 100 + 'vw';
+  heart.style.color = ['#ff69b4','#ff1493','#ffb6c1','#ff1493'][Math.floor(Math.random()*4)];
+  heart.innerHTML = '❤️';
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(), 5000);
+}
+
+const loveMarquee = document.getElementById('loveMarquee');
+loveMarquee.style.display = 'none';
+
+// Gift box flow
+const giftBox = document.getElementById('giftBox');
+const stage1 = document.getElementById('stage1');
+const nameDialog = document.getElementById('nameDialog');
+const goBtn = document.getElementById('goBtn');
+const birthdayPage = document.getElementById('birthdayPage');
+const nameInput = document.getElementById('nameInput');
+const countdownEl = document.getElementById('countdown');
+const daysSinceEl = document.getElementById('daysSince');
+const nextBtn = document.getElementById('nextBtn');
+
+giftBox.addEventListener('click', () => {
+  stage1.style.opacity = 0;
+  setTimeout(() => {
+    stage1.style.display = 'none';
+    nameDialog.style.display = 'flex';
+    nameDialog.style.opacity = 1;
+  }, 500);
+});
+
+goBtn.addEventListener('click', () => {
+  if (nameInput.value.trim() === "") return;
+  nameDialog.style.opacity = 0;
+  setTimeout(() => {
+    nameDialog.style.display = 'none';
+    birthdayPage.style.display = 'flex';
+    birthdayPage.style.opacity = 1;
+    loveMarquee.style.display = 'block';
+    setInterval(createHeart, 500);
+  }, 500);
+
+  // Countdown
+  function updateCountdown() {
+    const today = new Date();
+    const birthday = new Date(2025,10,5);
+    const diff = birthday - today;
+    const days = Math.floor(diff/1000/60/60/24);
+    const hours = Math.floor((diff/1000/60/60)%24);
+    const minutes = Math.floor((diff/1000/60)%60);
+    const seconds = Math.floor((diff/1000)%60);
+    countdownEl.textContent = `Countdown: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // Days since
+  const startDate = new Date(2010,10,5);
+  const endDate = new Date(2025,10,5);
+  const diffDays = Math.floor((endDate - startDate)/1000/60/60/24);
+  daysSinceEl.textContent = `The world is luckier since ${diffDays} days`;
+});
+
+nextBtn.addEventListener('click', () => {
+  window.location.href = "Page2.html"; // 👈 redirects to Page 2
+});
+</script>
+</body>
+</html>
